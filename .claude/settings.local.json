@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/felip/Desktop/**)",
+      "Bash(npx create-next-app@latest lukso-temp --typescript --tailwind --app --no-eslint --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(mv lukso-temp/* LUKSO/)",
+      "Bash(mv lukso-temp/.* LUKSO/)",
+      "Bash(file /c/Users/felip/Desktop/LUKSO/*.xlsx)",
+      "Bash(file /c/Users/felip/Desktop/LUKSO/*.pdf)",
+      "Bash(ls -lh /c/Users/felip/Desktop/LUKSO/*.xlsx /c/Users/felip/Desktop/LUKSO/*.pdf /c/Users/felip/Desktop/LUKSO/*.docx /c/Users/felip/Desktop/LUKSO/*.html)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(mv app:*)",
+      "Bash(mv components:*)",
+      "Bash(mv data:*)",
+      "Bash(mv types:*)",
+      "Bash(mv public:*)",
+      "Bash(mv AGENTS.md website/)",
+      "Bash(mv CLAUDE.md website/)",
+      "Bash(mv README.md website/)",
+      "Bash(mkdir -p website/.claude)",
+      "Bash(cp -r .claude/. website/.claude/)"
+    ]
+  }
+}

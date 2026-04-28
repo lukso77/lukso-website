@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+/* ── Custom theme tokens ─────────────────────────────────────────── */
+@theme inline {
+  --color-bg:      #0a0a0a;
+  --color-neon:    #c8ff00;
+  --color-blue:    #1a6fff;
+  --color-magenta: #ff1f8e;
+  --color-orange:  #ff5500;
+  --color-gray:    #555555;
+
+  --font-cormorant: var(--font-cormorant);
+  --font-montserrat: var(--font-montserrat);
+}
+
+/* ── CSS variables ───────────────────────────────────────────────── */
+:root {
+  --bg:      #0a0a0a;
+  --neon:    #c8ff00;
+  --blue:    #1a6fff;
+  --magenta: #ff1f8e;
+  --orange:  #ff5500;
+  --white:   #ffffff;
+  --gray:    #555555;
+  --border:  rgba(255,255,255,0.08);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg);
+  color: var(--white);
+}
+
+body {
+  font-family: var(--font-montserrat), Montserrat, sans-serif;
+  background-color: var(--bg);
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── Keyframes ────────────────────────────────────────────────────── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Marquee ──────────────────────────────────────────────────────── */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+/* ── Product card ─────────────────────────────────────────────────── */
+.product-card {
+  position: relative;
+  border: 1px solid var(--border);
+  background: #111111;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.product-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  width: 3px; height: 0;
+  background: var(--neon);
+  transition: height 0.25s ease;
+  z-index: 10;
+}
+
+.product-card:hover::before { height: 100%; }
+
+.product-card:hover {
+  border-color: rgba(200, 255, 0, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(200,255,0,0.06);
+}
+
+.product-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.product-card:hover .product-arrow { transform: translateX(4px); }
+
+/* ── Card scroll reveal ──────────────────────────────────────────── */
+.card-hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.card-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gray); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--neon); }
