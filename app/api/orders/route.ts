@@ -1,49 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { kv } from '@vercel/kv'
 
-const FILE = join(process.cwd(), 'data', 'orders.json')
+const KEY = 'orders'
 
-function readOrders() {
-  try { return JSON.parse(readFileSync(FILE, 'utf-8')) } catch { return [] }
+async function readOrders(): Promise<any[]> {
+  try {
+    const data = await kv.get<any[]>(KEY)
+    return data ?? []
+  } catch { return [] }
 }
 
-function writeOrders(orders: unknown[]) {
-  writeFileSync(FILE, JSON.stringify(orders, null, 2))
+async function writeOrders(orders: any[]) {
+  await kv.set(KEY, orders)
+}
+
+function auth(req: NextRequest) {
+  return req.headers.get('x-admin-token') === process.env.ADMIN_SECRET
 }
 
 export async function GET(req: NextRequest) {
-  const token = req.headers.get('x-admin-token')
-  if (token !== process.env.ADMIN_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-  return NextResponse.json(readOrders())
+  if (!auth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  return NextResponse.json(await readOrders())
 }
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const orders = readOrders()
+  const orders = await readOrders()
   const order = {
-    id: `ORD-${Date.now()}`,
-    createdAt: new Date().toISOString(),
-    status: 'pendiente',
     ...body,
+    id: `ORD-${Date.now()}`,
+    status: 'pendiente',
+    createdAt: new Date().toISOString(),
   }
   orders.unshift(order)
-  writeOrders(orders)
+  await writeOrders(orders)
   return NextResponse.json(order, { status: 201 })
 }
 
 export async function PATCH(req: NextRequest) {
-  const token = req.headers.get('x-admin-token')
-  if (token !== process.env.ADMIN_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  if (!auth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { id, status } = await req.json()
-  const orders = readOrders()
+  const orders = await readOrders()
   const idx = orders.findIndex((o: any) => o.id === id)
   if (idx === -1) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   orders[idx].status = status
-  writeOrders(orders)
+  await writeOrders(orders)
   return NextResponse.json(orders[idx])
 }
