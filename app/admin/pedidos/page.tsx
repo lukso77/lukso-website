@@ -45,7 +45,7 @@ export default function PedidosAdmin() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
           <span style={{ fontFamily: 'var(--font-montserrat)', fontWeight: 700, letterSpacing: '0.18em' }}>LK<span style={{ color: 'var(--neon)' }}>SO</span> <span style={{ fontSize: '0.6rem', color: 'var(--gray)', fontWeight: 400 }}>Admin</span></span>
           <nav style={{ display: 'flex', gap: '24px' }}>
-            {[{ label: 'Dashboard', href: '/admin' }, { label: 'Productos', href: '/admin/productos' }, { label: 'Pedidos', href: '/admin/pedidos' }].map(l => (
+            {[{ label: 'Dashboard', href: '/admin' }, { label: 'Productos', href: '/admin/productos' }, { label: 'Pedidos', href: '/admin/pedidos' }, { label: 'Descuentos', href: '/admin/descuentos' }].map(l => (
               <Link key={l.href} href={l.href} style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: l.href === '/admin/pedidos' ? 'var(--neon)' : 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>{l.label}</Link>
             ))}
           </nav>

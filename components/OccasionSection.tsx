@@ -46,9 +46,11 @@ const occasions: OccasionMeta[] = [
 
 export default function OccasionSection() {
   const [active, setActive] = useState<Occasion>('noche')
+  const [gender, setGender] = useState<'todos' | 'mujer' | 'hombre'>('todos')
 
   const filtered = products
     .filter(p => p.occasions?.includes(active))
+    .filter(p => gender === 'todos' || p.gender === gender || (gender !== 'mujer' && gender !== 'hombre' && p.gender === 'unisex'))
     .slice(0, 4)
 
   const meta = occasions.find(o => o.value === active)!
@@ -88,28 +90,60 @@ export default function OccasionSection() {
             </h2>
           </div>
 
-          {/* Occasion tabs */}
-          <div className="flex gap-2 flex-wrap" role="tablist" aria-label="Filtrar por ocasión">
-            {occasions.map(o => (
-              <button
-                key={o.value}
-                role="tab"
-                aria-selected={active === o.value}
-                onClick={() => setActive(o.value)}
-                className="flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-200"
-                style={{
-                  fontFamily: 'var(--font-montserrat)',
-                  letterSpacing: '0.1em',
-                  background: active === o.value ? o.accent : 'transparent',
-                  color: active === o.value ? '#0a0a0a' : 'rgba(255,255,255,0.4)',
-                  border: `1px solid ${active === o.value ? o.accent : 'var(--border)'}`,
-                  cursor: 'pointer',
-                }}
-              >
-                <span aria-hidden="true">{o.emoji}</span>
-                {o.label}
-              </button>
-            ))}
+          {/* Filters */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
+            {/* Occasion tabs */}
+            <div className="flex gap-2 flex-wrap" role="tablist" aria-label="Filtrar por ocasión">
+              {occasions.map(o => (
+                <button
+                  key={o.value}
+                  role="tab"
+                  aria-selected={active === o.value}
+                  onClick={() => setActive(o.value)}
+                  className="flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-200"
+                  style={{
+                    fontFamily: 'var(--font-montserrat)',
+                    letterSpacing: '0.1em',
+                    background: active === o.value ? o.accent : 'transparent',
+                    color: active === o.value ? '#0a0a0a' : 'rgba(255,255,255,0.4)',
+                    border: `1px solid ${active === o.value ? o.accent : 'var(--border)'}`,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span aria-hidden="true">{o.emoji}</span>
+                  {o.label}
+                </button>
+              ))}
+            </div>
+            {/* Gender tabs */}
+            <div className="flex gap-2" role="tablist" aria-label="Filtrar por género">
+              {([
+                { value: 'todos', label: 'Todos' },
+                { value: 'mujer', label: '♀ Mujer' },
+                { value: 'hombre', label: '♂ Hombre' },
+              ] as const).map(g => (
+                <button
+                  key={g.value}
+                  role="tab"
+                  aria-selected={gender === g.value}
+                  onClick={() => setGender(g.value)}
+                  style={{
+                    fontFamily: 'var(--font-montserrat)',
+                    fontSize: '0.6rem',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    padding: '5px 12px',
+                    background: gender === g.value ? 'rgba(255,255,255,0.1)' : 'transparent',
+                    color: gender === g.value ? 'white' : 'rgba(255,255,255,0.35)',
+                    border: `1px solid ${gender === g.value ? 'rgba(255,255,255,0.3)' : 'var(--border)'}`,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  {g.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 

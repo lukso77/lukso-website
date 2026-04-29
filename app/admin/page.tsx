@@ -85,9 +85,10 @@ function Dashboard({ token, logout }: { token: string; logout: () => void }) {
           </span>
           <nav style={{ display: 'flex', gap: '24px' }}>
             {[
-              { label: 'Dashboard', href: '/admin' },
-              { label: 'Productos', href: '/admin/productos' },
-              { label: 'Pedidos',   href: '/admin/pedidos' },
+              { label: 'Dashboard',   href: '/admin' },
+              { label: 'Productos',  href: '/admin/productos' },
+              { label: 'Pedidos',    href: '/admin/pedidos' },
+              { label: 'Descuentos', href: '/admin/descuentos' },
             ].map(l => (
               <Link key={l.href} href={l.href} style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}
                 onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = 'white')}

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Cormorant_Garamond, Montserrat } from 'next/font/google'
 import './globals.css'
 import { CartProvider } from '@/lib/cart-context'
+import { DiscountProvider } from '@/lib/discount-context'
 import CartDrawer from '@/components/CartDrawer'
 
 const cormorant = Cormorant_Garamond({
@@ -44,10 +45,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className={`${cormorant.variable} ${montserrat.variable}`}>
       <body>
-        <CartProvider>
-          {children}
-          <CartDrawer />
-        </CartProvider>
+        <DiscountProvider>
+          <CartProvider>
+            {children}
+            <CartDrawer />
+          </CartProvider>
+        </DiscountProvider>
       </body>
     </html>
   )

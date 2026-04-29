@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { Product } from '@/types'
 import { useCart } from '@/lib/cart-context'
+import { useDiscounts } from '@/lib/discount-context'
 
 interface Props {
   product: Product
@@ -13,6 +14,8 @@ const fmt = (n: number) => `$${n}.000`
 
 export default function ProductCard({ product, featured = false }: Props) {
   const { add } = useCart()
+  const { getDiscount } = useDiscounts()
+  const discount = getDiscount(product)
 
   const genderLabel: Record<Product['gender'], string> = {
     mujer:  'Mujer',
@@ -38,6 +41,12 @@ export default function ProductCard({ product, featured = false }: Props) {
         <div className="absolute top-3 right-3 px-2 py-1" style={{ fontFamily: 'var(--font-montserrat)', background: 'rgba(10,10,10,0.85)', color: 'var(--gray)', fontSize: '0.55rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 600, backdropFilter: 'blur(4px)' }}>
           {genderLabel[product.gender]}
         </div>
+        {/* Discount badge */}
+        {discount && (
+          <div className="absolute top-3 left-3 px-2 py-1" style={{ fontFamily: 'var(--font-montserrat)', background: 'var(--magenta)', color: 'white', fontSize: '0.55rem', letterSpacing: '0.1em', fontWeight: 700 }}>
+            -{discount.pct}%
+          </div>
+        )}
         {/* Quick-add hover overlay */}
         <button
           onClick={() => add(product)}
@@ -72,9 +81,16 @@ export default function ProductCard({ product, featured = false }: Props) {
           </div>
         )}
         <div className="flex items-center justify-between mt-auto pt-3">
-          <span style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.95rem', fontWeight: 600, color: 'white' }}>
-            {fmt(product.price)}
-          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+            {discount && (
+              <span style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.7rem', color: 'var(--gray)', textDecoration: 'line-through' }}>
+                {fmt(product.price)}
+              </span>
+            )}
+            <span style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.95rem', fontWeight: 600, color: discount ? 'var(--magenta)' : 'white' }}>
+              {fmt(discount ? discount.final : product.price)}
+            </span>
+          </div>
           <button
             onClick={() => add(product)}
             aria-label={`Añadir ${product.name} al carrito`}

@@ -3,11 +3,19 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/lib/cart-context'
+import { useDiscounts } from '@/lib/discount-context'
 
 const fmt = (n: number) => `$${n.toLocaleString('es-CO')}.000`
 
 export default function CartDrawer() {
   const { items, open, totalItems, totalPrice, remove, inc, dec, closeCart } = useCart()
+  const { getDiscount } = useDiscounts()
+
+  // Total con descuentos aplicados
+  const discountedTotal = items.reduce((sum, { product, qty }) => {
+    const d = getDiscount(product)
+    return sum + (d ? d.final : product.price) * qty
+  }, 0)
 
   return (
     <>
@@ -118,10 +126,17 @@ export default function CartDrawer() {
                       <span style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.75rem', minWidth: '20px', textAlign: 'center' }}>{qty}</span>
                       <button onClick={() => inc(product.id)} style={qtyBtn}>+</button>
                     </div>
-                    <p style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.85rem', fontWeight: 600 }}>
-                      {fmt(product.price * qty)}
-                    </p>
-                  </div>
+                    {(() => {
+                      const d = getDiscount(product)
+                      return (
+                        <div style={{ textAlign: 'right' }}>
+                          {d && <p style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.65rem', color: 'var(--gray)', textDecoration: 'line-through' }}>{fmt(product.price * qty)}</p>}
+                          <p style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.85rem', fontWeight: 600, color: d ? 'var(--magenta)' : 'white' }}>
+                            {fmt((d ? d.final : product.price) * qty)}
+                          </p>
+                        </div>
+                      )
+                    })()}
                 </div>
 
                 {/* Remove */}
@@ -142,7 +157,12 @@ export default function CartDrawer() {
           <div style={{ padding: '20px 24px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.65rem', color: 'var(--gray)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Total</span>
-              <span style={{ fontFamily: 'var(--font-cormorant)', fontSize: '1.8rem', fontWeight: 300, color: 'var(--neon)' }}>{fmt(totalPrice)}</span>
+              <div style={{ textAlign: 'right' }}>
+                {discountedTotal !== totalPrice && (
+                  <span style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.8rem', color: 'var(--gray)', textDecoration: 'line-through', display: 'block' }}>{fmt(totalPrice)}</span>
+                )}
+                <span style={{ fontFamily: 'var(--font-cormorant)', fontSize: '1.8rem', fontWeight: 300, color: 'var(--neon)' }}>{fmt(discountedTotal)}</span>
+              </div>
             </div>
             <p style={{ fontFamily: 'var(--font-montserrat)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em' }}>
               Envío calculado en el checkout · Pago 100% seguro
