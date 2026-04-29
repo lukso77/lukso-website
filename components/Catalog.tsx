@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { products } from '@/data/products'
+import { products as baseProducts } from '@/data/products'
 import ProductCard from './ProductCard'
 import { Product } from '@/types'
 
@@ -22,8 +22,18 @@ export default function Catalog() {
   const [fading, setFading]             = useState(false)
   const [query, setQuery]               = useState('')
   const [searchFocused, setSearchFocused] = useState(false)
+  const [customProducts, setCustomProducts] = useState<Product[]>([])
   const gridRef    = useRef<HTMLDivElement>(null)
   const inputRef   = useRef<HTMLInputElement>(null)
+
+  // Cargar productos del admin
+  useEffect(() => {
+    fetch('/api/products').then(r => r.json()).then(data => {
+      if (Array.isArray(data)) setCustomProducts(data)
+    }).catch(() => {})
+  }, [])
+
+  const products = [...baseProducts, ...customProducts]
 
   // Filtrar por género + búsqueda de texto
   const filtered = products.filter(p => {
